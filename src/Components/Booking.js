@@ -23,7 +23,7 @@ export const Booking = ({status, setStatus, reset}) => {
 
   // to handle 'Book' click.
   const handleClick = (e) => {
-    fetch("https://api.render.com/deploy/srv-cke190tjhfbs73a0hp4g?key=BNlieoCXe10/book", {
+    fetch("https://train-booking-one-coach.onrender.com/book", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
