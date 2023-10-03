@@ -9,7 +9,7 @@ const app = express();
 app.use(bodyParser.json());
 // handling CORS - Cross Origin Resourse Sharing.
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   }));
