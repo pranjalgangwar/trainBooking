@@ -12,7 +12,7 @@ export const Coach = () => {
   // Fetching the data from the backend about the booking.
   useEffect(() => {
     // Use the fetch API to make a request to the API endpoint.
-    fetch("http://localhost:3001/")
+    fetch("https://api.render.com/deploy/srv-cke190tjhfbs73a0hp4g?key=BNlieoCXe10/")
       .then(res => res.json())
       .then(data => {
         // Parsing JSON Data to get a normal JavaScript array.
@@ -39,7 +39,7 @@ export const Coach = () => {
   // Function to reset the Coach state,
   // just for testing purposes.
   const reset = () => {
-    fetch("http://localhost:3001/reset",{method: 'POST'})
+    fetch("https://api.render.com/deploy/srv-cke190tjhfbs73a0hp4g?key=BNlieoCXe10/reset",{method: 'POST'})
     .then(res => res.json);
     console.log("=====");
     let data = [];
