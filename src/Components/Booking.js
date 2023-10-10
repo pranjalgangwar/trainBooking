@@ -8,8 +8,13 @@ export const Booking = ({status, setStatus, reset}) => {
   // it will help to set upper limit on number of
   // seats user can select currently.
   let available = 0;
-  for(let i=0; i<80; i++)
-    if(status[i]===false) available++;
+  for(const row of status){
+    for(const seat of row){
+      if (seat === false) {
+        available++;
+      }
+    }
+  }
 
   // seats state will basically store user input - number of seats user wants to book.
   const [seats, setSeats] = useState(1);
@@ -23,7 +28,7 @@ export const Booking = ({status, setStatus, reset}) => {
 
   // to handle 'Book' click.
   const handleClick = (e) => {
-    fetch("https://train-booking-one-coach.onrender.com/book", {
+    fetch("http://localhost:3001/book", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,16 +42,20 @@ export const Booking = ({status, setStatus, reset}) => {
         return response.json(); // Parse the response JSON
       })
       .then((data) => {
-        // Handle the data returned from the API here
         setStatus(data.bookedSeats);
-        console.log(data.bookedSeats); // You can log or use the data as needed
+        setNotification(prev => {
+          prev.status = true;
+          prev.seats = data.bookedSeats.map(seat => `${seat.row + 1}-${seat.seat + 1}`).join(', ');
+          return {...prev}
+        });
       })
       .catch((error) => {
         console.error('Error:', error);
       });
-  
+      console.log(seats);
+
     // After 5 seconds, remove the output
-    setTimeout(() => setNotification({ status: false, seats: '' }), 5000);
+    setTimeout(() => setNotification({ status: false, seats:'' }), 5000);
   };
   
 

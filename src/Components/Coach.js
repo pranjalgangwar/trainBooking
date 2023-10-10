@@ -12,7 +12,7 @@ export const Coach = () => {
   // Fetching the data from the backend about the booking.
   useEffect(() => {
     // Use the fetch API to make a request to the API endpoint.
-    fetch("https://train-booking-one-coach.onrender.com/")
+    fetch("http://localhost:3001/")
       .then(res => res.json())
       .then(data => {
         // Parsing JSON Data to get a normal JavaScript array.
@@ -28,10 +28,9 @@ export const Coach = () => {
     setStatus(prev => {
       // Update the state of Coach temporarily.
       // Permanent state change in the database will happen in Booking.
-      for (let j = 0; j < i.length; j++) {
-        prev[i[j]] = true;
-      }
-      console.log(prev);
+      i.forEach(seat => {
+        prev[seat.row][seat.seat] = true;
+      });
       return [...prev];
     });
   }
@@ -39,12 +38,14 @@ export const Coach = () => {
   // Function to reset the Coach state,
   // just for testing purposes.
   const reset = () => {
-    fetch("https://train-booking-one-coach.onrender.com/reset",{method: 'POST'})
+    fetch("http://localhost:3001/reset",{method: 'POST'})
     .then(res => res.json);
-    console.log("=====");
     let data = [];
-    for (let i = 0; i < 80; i++) {
-      data.push(false);
+    const numRows = status.length;
+
+    for (let row = 0; row < numRows; row++) {
+      const seatsPerRow = status[row].length;
+      data.push(Array(seatsPerRow).fill(false));
     }
     setStatus([...data]);
   }
