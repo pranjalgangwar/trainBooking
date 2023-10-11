@@ -21,22 +21,25 @@ function findSeats(data, numSeats) {
       return null;
     }
   
-    let bestrow = 0;
-      let cr = 0;
+      let bestcoach = 0;
+      let cc = 0;
+      let bestrow = 0;
       let ncr = 0;
       let nbr=80;
       let flag = 0;
-    // Loop through the rows (each having 7 seats except the last one)
-    for(const row of data){
+    for (const coach of data){
+    let cr = 0;
+    for(const row of coach){
       const emptySeats = [];
       let currentSeat = 0;
       for(const seat of row){
         if (seat === false) {
-          emptySeats.push({row: cr, seat: currentSeat});
+          emptySeats.push({coach:cc, row: cr, seat: currentSeat});
           ncr++;
         }
       }
       if(ncr >= numSeats && nbr > ncr){
+        bestcoach = cc;
         bestrow = cr;
         flag =1;
         nbr = ncr;
@@ -44,14 +47,16 @@ function findSeats(data, numSeats) {
       cr++;
       ncr = 0;
     } 
+    cc++;
+  }
       // If enough empty seats are found in the same row, return them 
     let seatbooked = [];
     let num = numSeats
     if (flag === 1) {
       let currentSeatNumber = 0;
-      for (const seat of data[bestrow]) {
+      for (const seat of data[bestcoach][bestrow]) {
       if (seat === false && num>0){
-        seatbooked.push({row: bestrow, seat:currentSeatNumber});
+        seatbooked.push({coach:bestcoach, row: bestrow, seat:currentSeatNumber});
         num--;
       }
       currentSeatNumber++;
@@ -61,18 +66,22 @@ function findSeats(data, numSeats) {
     //If not enough seats in a single row, find any available empty seats
     const availableSeats = [];
     let referenceNumber = 0;
-    let currentRow = 0;
-     for(const row of data){
+    let currentCoach = 0;
+    for(const coach of data){
+      let currentRow = 0;
+     for(const row of coach){
       let currentSeat = 0;
       for(const seat of row){
         if (seat === false) {
-          availableSeats.push({row: currentRow, seat: currentSeat, referenceNumber: referenceNumber});
+          availableSeats.push({coach:currentCoach,row: currentRow, seat: currentSeat, referenceNumber: referenceNumber});
         }
         currentSeat++;
         referenceNumber++;
       }
       currentRow++;
     }
+    currentCoach++;
+  }
   
     let n = availableSeats.length;
     let mini = 81;
@@ -98,16 +107,14 @@ app.get('/', (req, res) => {
 // Route to handle booking seats
 app.post('/book', (req, res) => {
   let numSeats = req.body.numSeats;
-  console.log(numSeats);
   let data = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
   let seatsToBook = findSeats(data, numSeats);
   if (!seatsToBook) {
     res.status(400).json({ error: 'Not enough seats available.' });
     return;
   }
-  console.log("seat array:" + seatsToBook);
   seatsToBook.forEach(seat => {
-    data[seat.row][seat.seat] = true;
+    data[seat.coach][seat.row][seat.seat] = true;
   });
 
   fs.writeFileSync('./data.json', JSON.stringify(data));
@@ -122,13 +129,17 @@ app.post('/reset', (req, res) => {
     const existingData = JSON.parse(fs.readFileSync('./data.json', 'utf-8'));
 
     // Initialize the data array with the same dimensions as the existing data
-    const numRows = existingData.length;
     const data = [];
+    for(let c = 0; c<2; c++){
+    const numRows = existingData[c].length;
+    const coachData = [];
 
     for (let row = 0; row < numRows; row++) {
-      const seatsPerRow = existingData[row].length;
-      data.push(Array(seatsPerRow).fill(false));
+      const seatsPerRow = existingData[c][row].length;
+      coachData.push(Array(seatsPerRow).fill(false));
     }
+    data.push(coachData);
+  }
 
     // Write the updated data back to the data.json file
     fs.writeFileSync('./data.json', JSON.stringify(data));
