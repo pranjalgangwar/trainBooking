@@ -8,7 +8,8 @@ export const Booking = ({status, setStatus, reset}) => {
   // it will help to set upper limit on number of
   // seats user can select currently.
   let available = 0;
-  for(const row of status){
+  for (const coach of status)
+  for(const row of coach){
     for(const seat of row){
       if (seat === false) {
         available++;
@@ -45,7 +46,7 @@ export const Booking = ({status, setStatus, reset}) => {
         setStatus(data.bookedSeats);
         setNotification(prev => {
           prev.status = true;
-          prev.seats = data.bookedSeats.map(seat => `${seat.row + 1}-${seat.seat + 1}`).join(', ');
+          prev.seats = data.bookedSeats.map(seat => `C${seat.coach + 1}-${seat.row + 1}-${seat.seat + 1}`).join(', ');
           return {...prev}
         });
       })
@@ -69,7 +70,7 @@ export const Booking = ({status, setStatus, reset}) => {
                 {/* Button to book seats. */}
                 <BookButton disabled={seats > Math.min(available, 7) || notification.status} onClick={handleClick}>Book</BookButton>
                 {/* Button to reset the whole coach */}
-                <ResetButton disabled={available===80} onClick={() => reset()}> Reset </ResetButton>
+                <ResetButton onClick={() => reset()}> Reset </ResetButton>
             </>
         }
 
@@ -106,7 +107,7 @@ export const Booking = ({status, setStatus, reset}) => {
             <>
                 <p style={{color: "red", fontSize: "1.5em"}}><b>Tickets SOLD OUT 😓</b></p>
                 <p style={{opacity: "0.6", width: "auto"}}>Please try again some time later!</p>
-                <ResetButton disabled={available===80} onClick={() => reset()}> Reset </ResetButton>
+                <ResetButton onClick={() => reset()}> Reset </ResetButton>
             </>
         }
     </Container>

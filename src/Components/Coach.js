@@ -7,7 +7,7 @@ import backgroundImage from './Images/image.jpeg';
 
 export const Coach = () => {
   // State to store the status of all the seats.
-  const [status, setStatus] = useState([]);
+  const [status, setStatus] = useState([[],[]]);
 
   // Fetching the data from the backend about the booking.
   useEffect(() => {
@@ -29,7 +29,7 @@ export const Coach = () => {
       // Update the state of Coach temporarily.
       // Permanent state change in the database will happen in Booking.
       i.forEach(seat => {
-        prev[seat.row][seat.seat] = true;
+        prev[seat.coach][seat.row][seat.seat] = true;
       });
       return [...prev];
     });
@@ -41,12 +41,15 @@ export const Coach = () => {
     fetch("http://localhost:3001/reset",{method: 'POST'})
     .then(res => res.json);
     let data = [];
-    const numRows = status.length;
-
+    for(let c = 0; c<2;c++){
+      const numRows = status[c].length;
+      const coachData = [];
     for (let row = 0; row < numRows; row++) {
-      const seatsPerRow = status[row].length;
-      data.push(Array(seatsPerRow).fill(false));
+      const seatsPerRow = status[c][row].length;
+      coachData.push(Array(seatsPerRow).fill(false));
     }
+    data.push(coachData);
+  }
     setStatus([...data]);
   }
 
@@ -65,7 +68,15 @@ export const Coach = () => {
           <p>Available</p>
         </Legend>
       </Description>
-      <Seats status={status} />
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '60px'
+      }}>
+      <Seats status={status[0]} coachName={'C1'} />
+      <Seats status={status[1]} coachName={'C2'} />
+      </div>
+      
     </Container>
   );
 }

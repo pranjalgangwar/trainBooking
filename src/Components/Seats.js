@@ -3,10 +3,11 @@ import { Seat } from './Seat';
 import styled from 'styled-components';
 
 // Component to arrange the seats in proper styling.
-export const Seats = ({ status }) => {
+export const Seats = ({ status, coachName }) => {
   return (
     <div>
       <Container>
+      <div style={{display: 'flex',margin: '10px',justifyContent: 'center'}}><strong>{coachName}</strong></div>
         {status.map((row, i) => (
           <Row key={`row-${i}`}>
             {i % 2 !== 0
